@@ -37,3 +37,13 @@ redisTemplate.setKeySerializer(new StringRedisSerializer());
 redisTemplate.setValueSerializer(new HessianRedisSerializer<>());
 redisTemplate.setHashKeySerializer(new StringRedisSerializer());
 redisTemplate.setHashValueSerializer(new HessianRedisSerializer<>());
+
+
+
+1）从数据结构可以看出，在对象反序列化时：
+a）java对象增加字段、减少字段不会对序列化产生影响。
+b）改变字段类型，并且不兼容会导致读取问题
+c）serialVersionUID必须一致，如果对象中没有，则会自动根据ClassName、Fields等按某种算法生成，这样的话如果增加、减少字段，则缓存系统的老数据会出现问题。
+d）序列化严格按对象中的真实Fields，和get方法无关
+2）效率问题
+序列化是循环递归调用，相当消耗cpu，也多出很多冗余数据
